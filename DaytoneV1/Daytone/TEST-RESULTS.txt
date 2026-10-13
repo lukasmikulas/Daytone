@@ -1,0 +1,31 @@
+DAYTONE 0.1 — VERIFICATION
+
+Completed in this build environment:
+- JavaScript syntax checks.
+- 9 pure calculation checks: color endpoints/saturation, pause exclusion,
+  resume intervals, late countdown cap, cap after pause, unlimited stopwatch,
+  midnight split, daylight-saving boundaries, duration formatting.
+- Headless Chromium UI workflows on the final single-file HTML:
+  * all five period views and date navigation;
+  * countdown start, pause, resume, completion and exact 60-second cap;
+  * stopwatch persistence through reload and partial-session saving;
+  * two Pomodoro rounds with a break, manual transitions, no break credit;
+  * individual session deletion and total updates;
+  * profile name/avatar and daily-goal editing;
+  * JSON backup download and restore;
+  * personal/sample data isolation;
+  * mobile and tablet viewport checks with no horizontal document overflow;
+  * no JavaScript page errors in these workflows.
+- Desktop (1440px) and mobile (390px) screenshots inspected for layout.
+- Windows x64 PE GUI executable compiled with MinGW-w64; inspected imports
+  use Windows system libraries only. UI and icon are embedded.
+- ZIP member count/content checked and ZIP CRC integrity verified.
+
+Not completed:
+- Launching the executable on actual Windows/Edge.
+- iOS or Android native builds/device testing.
+- Native background notifications, screen-time enforcement, accessibility
+  audit, timezone-travel consistency, or multi-window conflict testing.
+
+The tests do not establish app-store readiness. See START-HERE.txt and the
+product plan for timer/storage behavior and prototype limitations.

@@ -1,0 +1,12 @@
+Daytone 0.2 — verification, 2026-10-13
+
+Passed Node core tests: time caps, pause exclusion, midnight and DST, colors.
+Passed Chromium UI suite: all history views, countdown, stopwatch reload,
+Pomodoro rounds and breaks, deletion, profile/goals, backup restore,
+sample/personal isolation, mobile/tablet overflow and JS error checks.
+Passed tag suite: creation/selection, locked activity during timer, reload
+recovery, 2h Coding / 1h Guitar ranking, rename and historical retagging,
+backup compatibility, old-storage migration, midnight splits, mobile layout.
+Desktop, phone and daily wheel screenshots visually inspected.
+Windows executable rebuilt from updated interface; PE32+ x86-64 inspected.
+Native executable launch has NOT been tested on a Windows machine.

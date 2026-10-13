@@ -1,0 +1,29 @@
+/* Run with PLAYWRIGHT_MODULE, CHROMIUM_PATH and optional CHROMIUM_ARGS.
+   These paths refer to the developer's test tools, not app dependencies. */
+const assert=require('node:assert/strict'),path=require('node:path');
+const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
+(async()=>{
+const browser=await chromium.launch({executablePath:process.env.CHROMIUM_PATH,args:process.env.CHROMIUM_ARGS?JSON.parse(process.env.CHROMIUM_ARGS):['--no-sandbox'],headless:true});
+const page=await browser.newPage({viewport:{width:1440,height:1100},timezoneId:'Europe/Bratislava'});const errors=[];page.on('pageerror',e=>errors.push(e.message));
+await page.clock.install({time:new Date('2026-10-14T12:00:00+02:00')});
+await page.goto('file://'+path.resolve(__dirname,'../Daytone.html'));
+const state=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('daytone-v1')));
+assert.equal(await page.locator('#ranges .selected').textContent(),'Week');
+await page.locator('#previous').click();assert.equal(await page.locator('#tiles .tile').count(),7);
+for(const r of ['day','month','year','all','week']){await page.locator(`[data-range="${r}"]`).click();assert.ok(await page.locator('#tiles .tile').count()>0);}
+console.log('PASS period views and navigation');
+await page.locator('#goToday').click();await page.locator('#useReal').click();assert.equal((await state()).personal.sessions.length,0);
+await page.locator('#workMinutes').fill('1');await page.locator('#workMinutes').blur();await page.locator('#task').fill('Countdown check');await page.locator('#start').click();await page.clock.fastForward(20000);await page.locator('#start').click();let paused=(await state()).personal.run;assert.equal(paused.runningSince,null);await page.clock.fastForward(120000);await page.locator('#start').click();await page.clock.fastForward(41000);
+let st=await state();assert.equal(st.personal.run,null);assert.equal(st.personal.sessions.length,1);let total=st.personal.sessions[0].intervals.reduce((s,p)=>s+p[1]-p[0],0);assert.equal(total,60000);console.log('PASS countdown pause/resume, pause exclusion, auto-save and cap');
+await page.locator('[data-mode="infinite"]').click();await page.locator('#start').click();await page.clock.fastForward(65000);await page.reload();assert.equal((await state()).personal.run.mode,'infinite');await page.locator('#finish').click();st=await state();assert.equal(st.personal.sessions.length,2);assert.ok(st.personal.sessions[1].intervals.reduce((s,p)=>s+p[1]-p[0],0)>=65000);console.log('PASS stopwatch survives reload and partial finish saves');
+await page.locator('[data-mode="pomodoro"]').click();await page.locator('#workMinutes').fill('1');await page.locator('#breakMinutes').fill('1');await page.locator('#rounds').fill('2');await page.locator('#rounds').blur();await page.locator('#start').click();await page.clock.fastForward(61000);st=await state();assert.equal(st.personal.sessions.length,3);assert.equal(st.personal.run.waiting,true);await page.clock.fastForward(600000);assert.equal((await state()).personal.sessions.length,3);await page.locator('#start').click();await page.clock.fastForward(61000);st=await state();assert.equal(st.personal.sessions.length,3);assert.equal(st.personal.run.nextPhase,'work');await page.locator('#start').click();await page.clock.fastForward(61000);st=await state();assert.equal(st.personal.sessions.length,4);assert.equal(st.personal.run,null);console.log('PASS Pomodoro rounds, waiting and break exclusion');
+await page.locator('#tiles .today .tilebox').click();await page.locator('[data-delete]').first().click();await page.locator('#confirmAction').click();assert.equal((await state()).personal.sessions.length,3);await page.locator('#closeModal').click();console.log('PASS session deletion');
+await page.locator('#profileButton').click();await page.locator('#nameInput').fill('Lukas');await page.locator('#shuffleAvatar').click();await page.locator('#saveProfile').click();assert.equal(await page.locator('#profileName').textContent(),'Lukas');
+await page.locator('#settingsNav').click();await page.locator('#goalInput').fill('3');await page.locator('#saveSettings').click();assert.equal((await state()).personal.goal,3);console.log('PASS profile and goal changes');
+await page.locator('#settingsNav').click();const downloadWait=page.waitForEvent('download');await page.locator('#exportData').click();const download=await downloadWait;const backupPath=path.resolve(__dirname,'../../test-backup.json');await download.saveAs(backupPath);await page.locator('#importFile').setInputFiles(backupPath);await page.locator('#confirmAction').click();assert.equal((await state()).personal.sessions.length,3);console.log('PASS backup export/restore');
+await page.locator('#settingsNav').click();await page.locator('#switchData').click();assert.equal((await state()).demo,true);assert.equal((await state()).personal.sessions.length,3);assert.ok((await state()).sample.sessions.length>100);console.log('PASS sample/personal isolation');
+await page.locator('#previous').click();await page.screenshot({path:path.resolve(__dirname,'../../desktop-check.png'),fullPage:true});
+await page.setViewportSize({width:390,height:844});await page.screenshot({path:path.resolve(__dirname,'../../mobile-check.png'),fullPage:true});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await page.locator('#profileButton').click();assert.equal(await page.locator('#modal').isVisible(),true);await page.locator('#closeModal').click();
+await page.setViewportSize({width:1024,height:768});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+assert.deepEqual(errors,[]);console.log('PASS mobile/tablet layout, dialogs and no JavaScript errors');await browser.close();
+})().catch(e=>{console.error(e);process.exit(1)});

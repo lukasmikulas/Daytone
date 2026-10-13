@@ -1,0 +1,78 @@
+DAYTONE — WINDOWS DEMO 0.1
+
+1. Extract this ZIP (right-click > Extract All).
+2. Double-click Daytone.exe.
+3. Explore sample history, or click “Start my own tracking”.
+
+Requirements: Windows 10/11, 64-bit, with Microsoft Edge installed.
+No Python, Node.js, installation, or administrator access is needed.
+The EXE contains the entire interface and opens it in a dedicated Edge app
+window. Edge is the display engine; this is not a fully native Windows UI.
+The app itself makes no network requests and has no account or cloud service.
+
+ALTERNATIVE PREVIEW
+Open Daytone.html in a modern browser. This is the same self-contained UI.
+The HTML preview and EXE use different browser storage. Export/import a JSON
+backup through Settings & data to transfer sessions between them.
+
+GETTING STARTED
+- Timer: choose a preset or custom duration (1–480 minutes).
+- Stopwatch: counts until you pause or finish.
+- Pomodoro: set work minutes, break minutes and number of rounds.
+- Give your session an optional name. Start, pause, resume, finish & save.
+- Completed rounds count toward focus; breaks and pauses do not.
+- After each Pomodoro phase, click to begin the next. Rounds do not start
+  automatically while you are away.
+- Tap a day to inspect or delete sessions. Switch Day/Week/Month/Year/All time.
+- Profile: change your name or shuffle your avatar.
+- Settings: daily intention, backup/restore, sample/personal spaces, reset.
+
+COLOR RULES
+0h = soft red; 1–2h = orange/amber trending toward green; 4h = lime;
+8h+ = green. The continuous scale is fixed at 8 hours.
+Daily intention defaults to 4h and is independent of the color scale.
+Week/month show days. Year shows months, all time shows years, each colored
+by average focus per calendar day. Zero days count; future days and dates
+before tracking started do not. The current day is included provisionally.
+Day view shows hours with a separate 0–60 minute scale.
+Your avatar uses the color of your all-time average daily hours.
+Only saved sessions affect colors. During a timer, use Finish & save to
+include partial work immediately.
+
+SAVING & RECOVERY
+Data lives in the dedicated Edge profile under:
+%LOCALAPPDATA%\DaytoneDemo\EdgeProfile
+UI file: %LOCALAPPDATA%\DaytoneDemo\index.html
+You can move the EXE without changing your data. Updates replace the UI only.
+Export a backup before resetting, changing computers, or clearing browser data.
+An exported backup contains saved sessions only, not an active timer.
+Sample and personal tracking are kept separate.
+
+If you close the window during a countdown, it stops at its target and is
+saved when reopened. A stopwatch continues counting elapsed wall time until
+stopped, including sleep/closed time. Pause before leaving if you do not want
+that time counted. Pomodoro never starts another phase on its own.
+Sounds are best-effort and require the app to be open. This demo has no native
+background notifications, screen-time blocking, or OS-level focus enforcement.
+Changing the system clock can affect active timers. Daily grouping uses the
+computer's local timezone; changing timezones can regroup historical sessions.
+Use one app window for recording focus. Open windows synchronize stored data,
+but simultaneous edits are not transactional.
+
+SIGNING & VALIDATION
+This is an unsigned development executable. Windows may show a publisher or
+reputation warning. If your organization blocks unsigned apps, use the HTML
+preview or ask for a signed build; no security settings need to be changed.
+The app was cross-compiled for Windows and its executable format/dependencies
+were inspected. It has not been launched on a Windows machine in this session.
+See TEST-RESULTS.txt for actual verification completed.
+
+CONTENTS
+Daytone.exe            Windows app launcher, complete embedded UI
+Daytone.html           Single-file browser preview
+PRODUCT-PLAN.md        Product decisions and iOS/Android implementation plan
+source/               Editable HTML/CSS/JS and launcher/build source
+ tests/               Time calculation and UI workflow tests
+
+To uninstall: close Daytone, export any wanted backup, delete the EXE and
+(optionally, to erase its data) the DaytoneDemo folder in local app data.
